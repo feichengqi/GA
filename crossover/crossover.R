@@ -8,9 +8,9 @@ ga_crossover = function(parentA, parentB){
   
   # Create two children
   childA = parentA
-  childA[splitpt+1:n] = parentB[splitpt+1:n]
+  childA[(splitpt+1):n] = parentB[(splitpt+1):n]
   childB = parentB
-  childB[splitpt+1:n] = parentA[splitpt+1:n]
+  childB[(splitpt+1):n] = parentA[(splitpt+1):n]
   
   # Randomly pick one child to return
   return(unlist(sample(list(childA, childB),1)))  
@@ -18,14 +18,17 @@ ga_crossover = function(parentA, parentB){
 
 ga_mutate = function(child, mprob = 0.03){
   # This function takes in a child and randomly mutates each
-  # gene with probability mprob
+  # gene with probability mprob.
   
+  # Create vector of positions to mutate
   changes = as.logical(rbinom(length(child), 1, prob = mprob))
-  child[changes] = !child[changes]
+  
+  # For the subset of child that needs to be mutated, flip values
+  child[changes] = !child[changes]  
   
   return(child)
 }
 
 parents = as.data.frame(matrix(rbinom(20*20,1,0.5), 20, 20))
 child_a = ga_crossover(parents[,1], parents[,2])
-child_b = ga_mutate(child)
+child_b = ga_mutate(child_a)
