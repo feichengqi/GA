@@ -1,3 +1,11 @@
+rlogical = function(size, p = 0.5){
+  # This function samples from Trues and Falses with 
+  # probability 1/2 each
+  
+  return(sample(c(TRUE, FALSE), size,
+                replace = TRUE, prob = c(p, 1-p)))
+}
+
 ga_crossover = function(parentA, parentB){
   # This function take in two parents and uses a simple split
   # to create children. It then picks a random child to pass on 
@@ -21,7 +29,8 @@ ga_mutate = function(child, mprob = 0.03){
   # gene with probability mprob.
   
   # Create vector of positions to mutate
-  changes = as.logical(rbinom(length(child), 1, prob = mprob))
+  changes = rlogical(length(child), mprob)
+#  changes = as.logical(rbinom(length(child), 1, prob = mprob))
   
   # For the subset of child that needs to be mutated, flip values
   child[changes] = !child[changes]  
@@ -30,7 +39,7 @@ ga_mutate = function(child, mprob = 0.03){
 }
 
 n = 20
-parents = matrix(sample(c(TRUE, FALSE), n^2, replace = TRUE,
-                        prob = c(0.5, 0.5), n, n))
+
+parents = matrix(rlogical(n^2), n, n) 
 child_a = ga_crossover(parents[,1], parents[,2])
 child_b = ga_mutate(child_a)
