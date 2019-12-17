@@ -25,3 +25,7 @@ ga_mutate = function(child, mprob = 0.03){
   
   return(child)
 }
+
+parents = as.data.frame(matrix(rbinom(20*20,1,0.5), 20, 20))
+child_a = ga_crossover(parents[,1], parents[,2])
+child_b = ga_mutate(child)
