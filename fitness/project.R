@@ -3,10 +3,11 @@ y = c(1,3,5,7,9)
 
 data <- data.frame(x1 = c(10,9,5,7,6), x2 = c(7,6,5,4,3), x3 = c(1,2,3,4,5))
 
-list_gene <- list(c(1,0,0), c(0,0,1), c(1,0,1))
+list_gene <- list(c(TRUE,FALSE,FALSE), c(TRUE,FALSE,TRUE), c(TRUE,FALSE,TRUE))
 
 # The new fitness function.
-#list_of_gene is a list of gene likes list(c(1,0,0), c(0,0,1), c(1,0,1)).
+#list_of_gene is a list of gene likes 
+#list(c(TRUE,FALSE,FALSE), c(TRUE,FALSE,TRUE), c(TRUE,FALSE,TRUE)).
 #data is a dataframe containing several x columus.
 #fitness is the fitness function, default in AIC.
 #func is the regression method, likes lm or glm, default in lm.
@@ -18,12 +19,8 @@ fitness2 <- function(list_of_gene, data, fitness = AIC, func = lm, response, min
   
   for (i in 1:length(list_of_gene)){
     gene <- list_of_gene[[i]]
-    gene_map <- rep(TRUE,length(gene))
     
-    for (j in 1:length(gene)){
-      if (gene[j] == 0){gene_map[j] <- FALSE}
-    }
-    regression_data <- data[,gene_map]
+    regression_data <- data[,gene]
     regression_data <- data.frame(y,regression_data)
     model <- func(y~., data = regression_data) 
     fitness_value <- c(fitness_value,fitness(model))
