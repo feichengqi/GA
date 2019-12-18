@@ -20,6 +20,7 @@ GA_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update
     # p is the number of individuals in population
     # t is the time of iterating
     assert_that(parent_ratio >= 0 & parent_ratio <= 1, msg = 'Ratio of parents should be between 0 and 1')
+    assert_that(nrow(data)>=dim, msg = 'The dimenstion exceeds the length of observed data vector.')
     pop = GA_initialize(dim, p)
     
     for(i in 1:t){
@@ -69,6 +70,6 @@ select_index = function(fitness_scores, method = 'rank'){
 y = c(1,3,5,7,9)
 data <- data.frame(x1 = c(10,9,5,7,6), x2 = c(7,6,5,4,3), x3 = c(1,2,3,4,5),
                    x4 =c (5,4,6,2,4),x5 = c(100,200,300,400,500))
-pop = GA_compute(dim = 5, p = 20, t = 100, selection_method = 'rank', partial_update = TRUE)
+pop = GA_compute(dim = 6, p = 20, t = 100, selection_method = 'rank', partial_update = TRUE)
 rank = frankv(fitness_score(pop, data, fitness = AIC, func = lm, response = y), order = -1, ties.method = 'first')
 pop[rank == 1]
