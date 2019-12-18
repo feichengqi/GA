@@ -53,7 +53,8 @@ select_index = function(fitness_score){
 
 
 y = c(1,3,5,7,9)
-data <- data.frame(x1 = c(10,9,5,7,6), x2 = c(7,6,5,4,3), x3 = c(1,2,3,4,5))
-pop = GA_compute(dim = 3, p = 20, t = 100)
+data <- data.frame(x1 = c(10,9,5,7,6), x2 = c(7,6,5,4,3), x3 = c(1,2,3,4,5),
+                   x4 =c (5,4,6,2,4),x5 = c(100,200,300,400,500))
+pop = GA_compute(dim = 5, p = 20, t = 100)
 rank = frankv(fitness_score(pop, data, fitness = AIC, func = lm, response = y), order = -1, ties.method = 'first')
 pop[rank == 1]
