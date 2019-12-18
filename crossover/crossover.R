@@ -21,7 +21,8 @@ ga_crossover = function(parentA, parentB){
   childB[(splitpt+1):n] = parentA[(splitpt+1):n]
   
   # Randomly pick one child to return
-  return(unlist(sample(list(childA, childB),1)))  
+  # Return both childs
+  return(list(childA, childB))  
 }
 
 ga_mutate = function(child, mprob = 0.03){

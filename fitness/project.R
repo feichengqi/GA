@@ -1,8 +1,8 @@
 
 y = c(1,3,5,7,9)
-data <- data.frame( x1 = c(10,9,5,7,6), x2 = c(7,6,5,4,3), x3 = c(1,2,3,4,5))
+data <- data.frame(x1 = c(10,9,5,7,6), x2 = c(7,6,5,4,3), x3 = c(1,2,3,4,5))
 length(data)
-list_gene <- list(c(1,0,0),c(0,0,1),c(1,0,1))
+list_gene <- list(c(1,0,0), c(0,0,1), c(1,0,1))
 # The new fitness function.
 fitness2 <- function(list_of_gene, data, fitness = AIC, func = lm) {
   fitness_value <- vector()
@@ -18,7 +18,7 @@ fitness2 <- function(list_of_gene, data, fitness = AIC, func = lm) {
     model <- func(y~., data = regression_data) 
     fitness_value <- c(fitness_value,fitness(model))
   }
-  return (fitness_value)
+  return (-fitness_value)
 }
 
 fitness2(list_gene, data = data)
