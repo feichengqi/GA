@@ -31,13 +31,13 @@ GA_compute = function(dim, p, t = 100){
         children = list()
         parents = pop[select_index(fitness_score)]
         p = length(parents)
-        for(i in 1:(p/2)){
+        for(i in 1:floor(p/2)){
             childs = ga_crossover(parentA = parents[[i]], parentB = parents[[p-i+1]])
             children = list.append(children, childs[[1]], childs[[2]])
         }
         children = lapply(children, ga_mutate)
+        pop = children
     }
-    pop = children
     return(pop)
 }
 
