@@ -4,36 +4,39 @@ source('fitness/project.R')
 source('crossover/crossover.R')
 
 
-# This function takes dimension and the number of individuals
-# and returns a list/matrix of initialized individuals
 GA_initialize = function(dim, p = 20){
-    individuals = list()
-    for(i in 1:p){
-        individual = runif(n = dim) > 0.5
-        individuals = list.append(individuals, individual)
-    }
-    return(individuals)
+    # This function takes dimension and the number of individuals
+    # and returns a list of initialized individuals
+    
+    individuals = data.frame(matrix(rlogical(dim*p), dim, p))
+    
+    return(as.list(individuals))
 }
 
 
-
-# This function computes the GA results
-# dim is the dimension of genes
-# p is the number of individuals in population
-# t is the time of iterating
 GA_compute = function(dim, p, t = 100){
+    # This function computes the GA results
+    # dim is the dimension of genes
+    # p is the number of individuals in population
+    # t is the time of iterating
+    
     pop = GA_initialize(dim, p)
     for(i in 1:t){
         # Find fitness
         fitness_score = fitness2(pop, data, fitness = AIC, func = lm)
         
         #UPDATE(pop)
-        children = list()
         parents = pop[select_index(fitness_score)]
         p = length(parents)
-        for(i in 1:floor(p/2)){
+        n_cross = floor(p/2)
+        children = list()
+        # children = list(n_cross*2)
+
+        for(i in 1:n_cross){
             childs = ga_crossover(parentA = parents[[i]], parentB = parents[[p-i+1]])
             children = list.append(children, childs[[1]], childs[[2]])
+            # children[[(i*2-1)]] = childs[[1]]
+            # children[[(i*2)]] = childs[[2]]
         }
         children = lapply(children, ga_mutate)
         pop = children
