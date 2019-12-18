@@ -8,7 +8,7 @@ GA_initialize = function(dim, p = 20){
     # This function takes dimension and the number of individuals
     # and returns a list of initialized individuals
     
-    individuals = data.frame(matrix(rlogical(dim*p), dim, p))
+    individuals = data.frame(matrix(runif(n = dim*p) > 0.5, dim, p))
     
     return(as.list(individuals))
 }
@@ -23,20 +23,17 @@ GA_compute = function(dim, p, t = 100){
     pop = GA_initialize(dim, p)
     for(i in 1:t){
         # Find fitness
-        fitness_score = fitness2(pop, data, fitness = AIC, func = lm)
-        
+        fitness_score = fitness2(pop,  data = data, fitness = AIC, func = lm)
         #UPDATE(pop)
         parents = pop[select_index(fitness_score)]
         p = length(parents)
         n_cross = floor(p/2)
-        children = list()
-        # children = list(n_cross*2)
+        children = list(n_cross*2)
 
         for(i in 1:n_cross){
             childs = ga_crossover(parentA = parents[[i]], parentB = parents[[p-i+1]])
-            children = list.append(children, childs[[1]], childs[[2]])
-            # children[[(i*2-1)]] = childs[[1]]
-            # children[[(i*2)]] = childs[[2]]
+            children[[(i*2-1)]] = childs[[1]]
+            children[[(i*2)]] = childs[[2]]
         }
         children = lapply(children, ga_mutate)
         pop = children
@@ -52,8 +49,6 @@ select_index = function(fitness_score){
     parents = sample(1:p, size = p, replace = TRUE, prob = selection_prob)
     return(parents)
 }
-
-
 
 
 
