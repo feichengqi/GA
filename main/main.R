@@ -23,7 +23,7 @@ GA_compute = function(dim, p, t = 100){
     pop = GA_initialize(dim, p)
     for(i in 1:t){
         # Find fitness
-        fitness_score = fitness2(pop,  data = data, fitness = AIC, func = lm)
+        fitness_score = fitness_score(pop,  data = data, fitness = AIC, func = lm, response = y)
         #UPDATE(pop)
         parents = pop[select_index(fitness_score)]
         p = length(parents)
@@ -55,5 +55,5 @@ select_index = function(fitness_score){
 y = c(1,3,5,7,9)
 data <- data.frame(x1 = c(10,9,5,7,6), x2 = c(7,6,5,4,3), x3 = c(1,2,3,4,5))
 pop = GA_compute(dim = 3, p = 20, t = 100)
-rank = frankv(fitness2(pop, data, fitness = AIC, func = lm), order = -1, ties.method = 'first')
+rank = frankv(fitness_score(pop, data, fitness = AIC, func = lm, response = y), order = -1, ties.method = 'first')
 pop[rank == 1]
