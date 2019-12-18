@@ -33,6 +33,8 @@ fitness_score <- function(list_of_gene, data, fitness = AIC, func = lm, response
   }
   if (min == TRUE){return (-fitness_value)} else{return (fitness_value)}
 }
+
+
 # test
 fitness_score(list_gene, data = data)
 fitness_score(list_gene, data = data, func = glm, response = y)

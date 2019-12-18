@@ -14,18 +14,19 @@ GA_initialize = function(dim, p = 20){
 }
 
 
-GA_compute = function(dim, p, t = 100){
+GA_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update = FALSE, parent_ratio = 0.5){
     # This function computes the GA results
     # dim is the dimension of genes
     # p is the number of individuals in population
     # t is the time of iterating
-    
+    assert_that(parent_ratio >= 0 & parent_ratio <= 1, msg = 'Ratio of parents should be between 0 and 1')
     pop = GA_initialize(dim, p)
+    
     for(i in 1:t){
         # Find fitness
         fitness_score = fitness_score(pop,  data = data, fitness = AIC, func = lm, response = y)
         #UPDATE(pop)
-        parents = pop[select_index(fitness_score)]
+        parents = pop[select_index(fitness_score, method = selection_method)]
         p = length(parents)
         n_cross = floor(p/2)
         children = list(n_cross*2)
@@ -35,18 +36,31 @@ GA_compute = function(dim, p, t = 100){
             children[[(i*2-1)]] = childs[[1]]
             children[[(i*2)]] = childs[[2]]
         }
+        
+        if(partial_update){
+            ind = sample(1:p, floor(parent_ratio*p), replace = FALSE)
+            children[ind] = pop[ind]
+        }
+        
         children = lapply(children, ga_mutate)
         pop = children
+        
     }
     return(pop)
 }
 
-select_index = function(fitness_score){
-    p = length(fitness_score)
-    # Ascending rank with respect to fitness score
-    fitness_rank = frankv(fitness_score, order = 1)
-    selection_prob = 2*fitness_rank / (p^2 + p)
-    parents = sample(1:p, size = p, replace = TRUE, prob = selection_prob)
+select_index = function(fitness_scores, method = 'rank'){
+    assert_that(method %in% c('score', 'rank'), msg = "method should be {score, rank}")
+    p = length(fitness_scores)
+    if(method == 'rank'){
+        fitness_rank = frankv(fitness_scores, order = 1)
+        selection_prob = 2*fitness_rank / (p^2 + p)
+        parents = sample(1:p, size = p, replace = TRUE, prob = selection_prob)
+    }
+    if(method == 'score'){
+        parents = (1:p)[fitness_scores >= median(fitness_scores)]
+        parents = c(parents, sample(1:p, size = p - length(parents), replace = TRUE))
+    }
     return(parents)
 }
 
@@ -55,6 +69,6 @@ select_index = function(fitness_score){
 y = c(1,3,5,7,9)
 data <- data.frame(x1 = c(10,9,5,7,6), x2 = c(7,6,5,4,3), x3 = c(1,2,3,4,5),
                    x4 =c (5,4,6,2,4),x5 = c(100,200,300,400,500))
-pop = GA_compute(dim = 5, p = 20, t = 100)
+pop = GA_compute(dim = 5, p = 20, t = 100, selection_method = 'rank', partial_update = TRUE)
 rank = frankv(fitness_score(pop, data, fitness = AIC, func = lm, response = y), order = -1, ties.method = 'first')
 pop[rank == 1]
