@@ -1,6 +1,6 @@
 rlogical = function(size, p = 0.5){
   # This function samples from Trues and Falses with 
-  # probability 1/2 each
+  # probability 1/2 each by default
   
   return(sample(c(TRUE, FALSE), size,
                 replace = TRUE, prob = c(p, 1-p)))
@@ -20,8 +20,7 @@ ga_crossover = function(parentA, parentB){
   childB = parentB
   childB[(splitpt+1):n] = parentA[(splitpt+1):n]
   
-  # Randomly pick one child to return
-  # Return both childs
+  # Return both children
   return(list(childA, childB))  
 }
 
@@ -31,8 +30,7 @@ ga_mutate = function(child, mprob = 0.03){
   
   # Create vector of positions to mutate
   changes = rlogical(length(child), mprob)
-#  changes = as.logical(rbinom(length(child), 1, prob = mprob))
-  
+
   # For the subset of child that needs to be mutated, flip values
   child[changes] = !child[changes]  
   
