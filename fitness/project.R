@@ -1,11 +1,21 @@
 
 y = c(1,3,5,7,9)
+
 data <- data.frame(x1 = c(10,9,5,7,6), x2 = c(7,6,5,4,3), x3 = c(1,2,3,4,5))
-length(data)
+
 list_gene <- list(c(1,0,0), c(0,0,1), c(1,0,1))
+
 # The new fitness function.
-fitness2 <- function(list_of_gene, data, fitness = AIC, func = lm) {
+#list_of_gene is a list of gene likes list(c(1,0,0), c(0,0,1), c(1,0,1)).
+#data is a dataframe containing several x columus.
+#fitness is the fitness function, default in AIC.
+#func is the regression method, likes lm or glm, default in lm.
+#response is the response value (y).
+#min: TRUE is for those fitness function the smaller the fitness value the better the model
+#like AIC,while FALSE is for those the larger fitness value the better the model.
+fitness2 <- function(list_of_gene, data, fitness = AIC, func = lm, response, min = TRUE) {
   fitness_value <- vector()
+  
   for (i in 1:length(list_of_gene)){
     gene <- list_of_gene[[i]]
     gene_map <- rep(TRUE,length(gene))
@@ -18,11 +28,11 @@ fitness2 <- function(list_of_gene, data, fitness = AIC, func = lm) {
     model <- func(y~., data = regression_data) 
     fitness_value <- c(fitness_value,fitness(model))
   }
-  return (-fitness_value)
+  if (min == TRUE){return (-fitness_value)} else{return (fitness_value)}
 }
-
-fitness2(list_gene, data = data)
-fitness2(list_gene, data = data, func = glm)
+# test
+fitness2(list_gene, data = data, response = y)
+fitness2(list_gene, data = data, func = glm, response = y)
 
 
 
