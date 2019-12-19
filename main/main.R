@@ -115,7 +115,7 @@ select_index = function(fitness_scores, method = 'rank'){
 #                   x4 =c (5,4,6,2,4),x5 = c(100,200,300,400,500))
 data = read.table('madelon_train.data')
 y = unlist(read.table('madelon_train.labels'))
-pop = GA_compute(dim = 10, p = 20, t = 100, selection_method = 'score', partial_update = FALSE, data = data, fitness = AIC, func = glm, response = y, min = TRUE)
+pop = GA_compute(dim = 500, p = 20, t = 100, selection_method = 'score', partial_update = FALSE, data = data, fitness = AIC, func = glm, response = y, min = TRUE)
 
 ft_score = fitness_score(pop[[1]], data, fitness = AIC, func = glm, response = y, min = TRUE)
 result = pop[[1]][ft_score == max(ft_score)]
