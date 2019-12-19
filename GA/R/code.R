@@ -125,7 +125,7 @@ ga_initialize = function(dim, p = 20){
 #'
 
 
-ga_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update = FALSE, parent_ratio = 0.5, m_prob = 0.03, ...){
+select = function(dim, p, t = 100, selection_method = 'rank', partial_update = FALSE, parent_ratio = 0.5, m_prob = 0.03, ...){
   # This function computes the GA results
   # dim is the dimension of genes
   # p is the number of individuals in population
@@ -135,7 +135,7 @@ ga_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update
   assert_that(nrow(data)>=dim, msg = 'The dimenstion exceeds the length of observed data vector.')
   pop = ga_initialize(dim, p)
   highest_fitness = numeric()
-  best_individual = list(0,0)
+  best_individual = list(0,-1e8)
   for(i in 1:t){
     # Find fitness
     ga_fitness_scores = ga_fitness_score(pop, ...)

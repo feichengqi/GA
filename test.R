@@ -24,3 +24,5 @@ fitness_scores
 
 assert_that(identical(fitness, fitness_scores))
 
+pop_result = select(dim = 3, p = 20, t = 50, m_prob = 0.01, data = data, fitness = AIC, func = lm, response = y, min = TRUE)
+
