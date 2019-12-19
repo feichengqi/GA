@@ -87,7 +87,7 @@ ga_initialize = function(dim, p = 20){
 
 
 
-#' GENETIC ALGORITHMS
+#' GENETIC ALGORITHMS FUNCTION
 #'
 #' @param dim A number, indicating the dimension of right-hand-side variables.
 #' @param p A number, indicating the number of individuals in your population.
