@@ -4,6 +4,9 @@ source('fitness/project.R')
 source('crossover/crossover.R')
 
 
+
+
+## GA_initialize() function initializes the 
 GA_initialize = function(dim, p = 20){
     # This function takes dimension and the number of individuals
     # and returns a list of initialized individuals
@@ -14,11 +17,34 @@ GA_initialize = function(dim, p = 20){
 }
 
 
+
+
+#' GENETIC ALGORITHMS
+#' 
+#' @param dim A number, indicating the dimension of right-hand-side variables.
+#' @param p A number, indicating the number of individuals in your population.
+#' @param t A number, indicating the time of iterations.
+#' @param selection_method A string, either 'rank' or 'score'. For 'rank', the algorithm will select parents according to their fitness ranks; for 'score', the algorithm will select parents according to their fitness raw scores
+#' @param partial_update A logical variable, deciding whether to retain some parents of previous generation when updating population
+#' @param  parent_ratio A number between 0 and 1, deciding the ratio of parents retained from previous generation, if selection_method is TRUE
+#' @param ... A set of parameters to decide how to calculate fitness function, explained below
+#' @param data A data.frame of right-hand-variables, which should be (n by dim)
+#' @param response A vector of response in your regression, which should be n by 1
+#' @param fitness A function, to calculalte the fitness, default AIC
+#' @param func A function of linear regression, either 'glm' or 'lm', default lm
+#' @param min A logical variable, if TRUE, it will return the negative value of fitness scores
+#' @return A list of logical variables with highest fitness score after iterations
+#' @examples 
+#' GA_compute(dim = 500, p = 20, t = 100, selection_method = 'rank', partial_update = TRUE, data = data, fitness = AIC, func = glm, response = y)
+ 
+
+
+
+# This function computes the GA results
+# dim is the dimension of genes
+# p is the number of individuals in population
+# t is the time of iterating
 GA_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update = FALSE, parent_ratio = 0.5, ...){
-    # This function computes the GA results
-    # dim is the dimension of genes
-    # p is the number of individuals in population
-    # t is the time of iterating
     assert_that(parent_ratio >= 0 & parent_ratio <= 1, msg = 'Ratio of parents should be between 0 and 1')
     assert_that(nrow(data)>=dim, msg = 'The dimenstion exceeds the length of observed data vector.')
     pop = GA_initialize(dim, p)
