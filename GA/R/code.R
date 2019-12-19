@@ -1,6 +1,8 @@
 library(assertthat)
 library(rlist)
 library(data.table)
+library(testthat)
+library(devtools)
 
 ga_rlogical = function(size, p = 0.5){
   # This function samples from Trues and Falses with
@@ -61,8 +63,8 @@ ga_fitness_score <- function(list_of_gene, data, fitness = AIC, func = lm, respo
     gene <- list_of_gene[[i]]
 
     regression_data <- data[,gene]
-    regression_data <- data.frame(y,regression_data)
-    model <- func(y~., data = regression_data)
+    regression_data <- data.frame(response,regression_data)
+    model <- func(response~., data = regression_data)
     fitness_value <- c(fitness_value,fitness(model))
   }
   if (min == TRUE){

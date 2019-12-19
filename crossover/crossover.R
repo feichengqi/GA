@@ -29,7 +29,7 @@ ga_mutate = function(child, mprob = 0.03){
   # gene with probability mprob.
   
   # Create vector of positions to mutate
-  changes = rlogical(length(child), mprob)
+  changes = ga_rlogical(length(child), mprob)
 
   # For the subset of child that needs to be mutated, flip values
   child[changes] = !child[changes]  
