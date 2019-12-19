@@ -135,7 +135,8 @@ select = function(dim, p, t = 100, selection_method = 'rank', partial_update = F
   assert_that(nrow(data)>=dim, msg = 'The dimenstion exceeds the length of observed data vector.')
   pop = ga_initialize(dim, p)
   highest_fitness = numeric()
-  best_individual = list(0,-1e8)
+  best_individual = 0
+  best_score = -1e8
   for(i in 1:t){
     # Find fitness
     ga_fitness_scores = ga_fitness_score(pop, ...)
@@ -143,9 +144,9 @@ select = function(dim, p, t = 100, selection_method = 'rank', partial_update = F
 
     # Find the best individual
     highest_fitness = c(highest_fitness, max_fit_score)
-    if(max_fit_score > best_individual[[2]]){
-      best_individual[[1]] = pop[ga_fitness_scores == max_fit_score]
-      best_individual[[2]] = max_fit_score
+    if(max_fit_score > best_score){
+      best_individual = pop[ga_fitness_scores == max_fit_score][1]
+      best_score = max_fit_score
     }
 
     #UPDATE(pop)
@@ -171,11 +172,11 @@ select = function(dim, p, t = 100, selection_method = 'rank', partial_update = F
 
   # Latest Update of best_individual
   ga_fitness_scores = ga_fitness_score(pop, ...)
-  if(max_fit_score > best_individual[[2]]){
-    best_individual[[1]] = pop[ga_fitness_scores == max_fit_score]
-    best_individual[[2]] = max_fit_score
+  if(max_fit_score > best_score){
+    best_individual = pop[ga_fitness_scores == max_fit_score][1]
+    best_score = max_fit_score
   }
-  return(list(pop,highest_fitness, best_individual))
+  return(list(pop,highest_fitness, list(best_individual, best_score)))
 }
 
 ga_select_index = function(ga_fitness_scores, method = 'rank'){

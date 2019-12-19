@@ -24,5 +24,6 @@ fitness_scores
 
 assert_that(identical(fitness, fitness_scores))
 
-pop_result = select(dim = 3, p = 20, t = 50, m_prob = 0.01, data = data, fitness = AIC, func = lm, response = y, min = TRUE)
-
+pop_result = select(dim = 3, p = 25, t = 50, m_prob = 0.01, data = data, fitness = AIC, func = lm, response = y, min = TRUE)
+names(pop_result[[3]][[1]]) = NULL
+assert_that(identical(unlist(pop_result[[3]][[1]]), c(TRUE, FALSE, FALSE)))
