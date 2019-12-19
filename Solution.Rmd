@@ -17,11 +17,11 @@ For the selection function, we use common approach to evaluate fitness based on 
 
 We tested our final function on two synthetic datasets: the Madelon dataset from the NIPS 2003 feature selection challenge and a dataset that we created ourselves. The Madelon dataset, which we downloaded from the UCI Machine Learning Repository^[Source: http://archive.ics.uci.edu/ml/datasets/Madelon?ref=datanews.io], is a dataset with a binary response, 500 attributes and 2000 observations. 
 
-![Madelon using Rank Selection](./Rank_Method_Result.png)
+![Madelon using Rank Selection, with mutation rate = 0.03](./Rank_Method_Result.png)
 
 According to the data documentation, there are 5 key features and 15 features that are linear combinations of those 5. The remaining features are "probes" that tell us nothing about the data, therefore in testing our function with this dataset, we aim to identify at most 20 features to keep. 
 
-![Madelon using Score Selection](./Score_Method_Result.png)
+![Madelon using Score Selection, with mutation rate = 0.03](./Score_Method_Result.png)
 
 After running the algorithm once, we identified 213 features. This number is much greater than 20, however, we know that we may not be using the most ideal forms of crossover and mutation to get the best performance. Also, with more iterations of the algorithm, we could get better performance. From the plots, we see a clear improvement of our individuals as iterations increases. We see the methods perform quite similarly in this case.
 
