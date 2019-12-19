@@ -27,13 +27,14 @@ GA_initialize = function(dim, p = 20){
 #' @param selection_method A string, either 'rank' or 'score'. For 'rank', the algorithm will select parents according to their fitness ranks; for 'score', the algorithm will select parents according to their fitness raw scores
 #' @param partial_update A logical variable, deciding whether to retain some parents of previous generation when updating population
 #' @param  parent_ratio A number between 0 and 1, deciding the ratio of parents retained from previous generation, if selection_method is TRUE
+#' @param m_prob A number between 0 and 1, indicating the probability of mutation
 #' @param ... A set of parameters to decide how to calculate fitness function, explained below
 #' @param data A data.frame of right-hand-variables, which should be (n by dim)
 #' @param response A vector of response in your regression, which should be n by 1
 #' @param fitness A function, to calculalte the fitness, default AIC
 #' @param func A function of linear regression, either 'glm' or 'lm', default lm
 #' @param min A logical variable, if TRUE, it will return the negative value of fitness scores
-#' @return A list of two :a list of latest generation and a vector of highest fitness score of each iteration
+#' @return A list of three :a list of latest generation, a vector of highest fitness score of each iteration, the best individual appeared(result & fitness score)
 #' @examples 
 #' GA_compute(dim = 500, p = 20, t = 100, selection_method = 'rank', partial_update = TRUE, data = data, fitness = AIC, func = glm, response = y)
  
@@ -44,16 +45,24 @@ GA_initialize = function(dim, p = 20){
 # dim is the dimension of genes
 # p is the number of individuals in population
 # t is the time of iterating
-GA_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update = FALSE, parent_ratio = 0.5, ...){
+GA_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update = FALSE, parent_ratio = 0.5, m_prob = 0.03, ...){
     assert_that(parent_ratio >= 0 & parent_ratio <= 1, msg = 'Ratio of parents should be between 0 and 1')
     assert_that(nrow(data)>=dim, msg = 'The dimenstion exceeds the length of observed data vector.')
     pop = GA_initialize(dim, p)
     highest_fitness = numeric()
-    
+    best_individual = list(0,0)
     for(i in 1:t){
         # Find fitness
         fitness_scores = fitness_score(pop, ...)
-        highest_fitness = c(highest_fitness, max(fitness_scores))
+        max_fit_score = max(fitness_scores)
+        
+        # Find the best individual
+        highest_fitness = c(highest_fitness, max_fit_score)
+        if(max_fit_score > best_individual[[2]]){
+            best_individual[[1]] = pop[fitness_scores == max_fit_score]
+            best_individual[[2]] = max_fit_score
+        }
+        
         #UPDATE(pop)
         parents = pop[select_index(fitness_scores, method = selection_method)]
         p = length(parents)
@@ -71,10 +80,17 @@ GA_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update
             children[ind] = pop[ind]
         }
         
-        children = lapply(children, ga_mutate)
+        children = lapply(children, ga_mutate, mprob = m_prob)
         pop = children
     }
-    return(list(pop,highest_fitness))
+    
+    # Latest Update of best_individual
+    fitness_scores = fitness_score(pop, ...)
+    if(max_fit_score > best_individual[[2]]){
+        best_individual[[1]] = pop[fitness_scores == max_fit_score]
+        best_individual[[2]] = max_fit_score
+    }
+    return(list(pop,highest_fitness, best_individual))
 }
 
 select_index = function(fitness_scores, method = 'rank'){
@@ -99,7 +115,8 @@ select_index = function(fitness_scores, method = 'rank'){
 #                   x4 =c (5,4,6,2,4),x5 = c(100,200,300,400,500))
 data = read.table('madelon_train.data')
 y = unlist(read.table('madelon_train.labels'))
-pop = GA_compute(dim = 500, p = 20, t = 100, selection_method = 'score', partial_update = FALSE, data = data, fitness = AIC, func = glm, response = y, min = TRUE)
+pop = GA_compute(dim = 10, p = 20, t = 100, selection_method = 'score', partial_update = FALSE, data = data, fitness = AIC, func = glm, response = y, min = TRUE)
+
 ft_score = fitness_score(pop[[1]], data, fitness = AIC, func = glm, response = y, min = TRUE)
 result = pop[[1]][ft_score == max(ft_score)]
 plot(x = 1:100, y = pop[[2]], xlab = 'iteration', ylab = 'highest fitness')
