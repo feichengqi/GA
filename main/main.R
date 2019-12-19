@@ -14,7 +14,7 @@ GA_initialize = function(dim, p = 20){
 }
 
 
-GA_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update = FALSE, parent_ratio = 0.5){
+GA_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update = FALSE, parent_ratio = 0.5, ...){
     # This function computes the GA results
     # dim is the dimension of genes
     # p is the number of individuals in population
@@ -25,9 +25,9 @@ GA_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update
     
     for(i in 1:t){
         # Find fitness
-        fitness_score = fitness_score(pop,  data = data, fitness = AIC, func = lm, response = y)
+        fitness_scores = fitness_score(pop, ...)
         #UPDATE(pop)
-        parents = pop[select_index(fitness_score, method = selection_method)]
+        parents = pop[select_index(fitness_scores, method = selection_method)]
         p = length(parents)
         n_cross = floor(p/2)
         children = list(n_cross*2)
@@ -45,7 +45,6 @@ GA_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update
         
         children = lapply(children, ga_mutate)
         pop = children
-        
     }
     return(pop)
 }
@@ -67,9 +66,11 @@ select_index = function(fitness_scores, method = 'rank'){
 
 
 
-y = c(1,3,5,7,9)
-data <- data.frame(x1 = c(10,9,5,7,6), x2 = c(7,6,5,4,3), x3 = c(1,2,3,4,5),
-                   x4 =c (5,4,6,2,4),x5 = c(100,200,300,400,500))
-pop = GA_compute(dim = 6, p = 20, t = 100, selection_method = 'rank', partial_update = TRUE)
-rank = frankv(fitness_score(pop, data, fitness = AIC, func = lm, response = y), order = -1, ties.method = 'first')
+#y = c(1,3,5,7,9)
+#data <- data.frame(x1 = c(10,9,5,7,6), x2 = c(7,6,5,4,3), x3 = c(1,2,3,4,5),
+#                   x4 =c (5,4,6,2,4),x5 = c(100,200,300,400,500))
+data = read.table('madelon_train.data')
+y = unlist(read.table('madelon_train.labels'))
+pop = GA_compute(dim = 500, p = 20, t = 100, selection_method = 'rank', partial_update = TRUE, data = data, fitness = AIC, func = glm, response = y)
+rank = frankv(fitness_score(pop, data, fitness = AIC, func = glm, response = y), order = -1, ties.method = 'first')
 pop[rank == 1]

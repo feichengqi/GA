@@ -31,7 +31,12 @@ fitness_score <- function(list_of_gene, data, fitness = AIC, func = lm, response
     model <- func(y~., data = regression_data) 
     fitness_value <- c(fitness_value,fitness(model))
   }
-  if (min == TRUE){return (-fitness_value)} else{return (fitness_value)}
+  if (min == TRUE){
+    return (-fitness_value)
+  } 
+  else{
+    return (fitness_value)
+    }
 }
 
 
