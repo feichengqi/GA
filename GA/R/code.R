@@ -102,7 +102,27 @@ ga_initialize = function(dim, p = 20){
 #' @param min A logical variable, if TRUE, it will return the negative value of fitness scores
 #' @return A list of three :a list of latest generation, a vector of highest fitness score of each iteration, the best individual appeared(result & fitness score)
 #' @examples
-#' GA_compute(dim = 500, p = 20, t = 100, selection_method = 'rank', partial_update = TRUE, data = data, fitness = AIC, func = glm, response = y)
+#'
+#' \dontrun{
+#' data = read.table('madelon_train.data')
+#' y = unlist(read.table('madelon_train.labels'))
+#' pop = ga_compute(dim = ncol(data), p = nrow(data), t = 100, selection_method = 'score', partial_update = FALSE, data = data, fitness = AIC, func = glm, response = y, min = TRUE)
+#' }
+#'
+#' \dontrun{
+#' set.seed(1)
+#' n = 500
+#' x = matrix(rnorm(n*3), n, 3)
+#' linearcombos = replicate(7, gen_linearcombo(x))
+#' probes = matrix(rnorm(n*10, 0, 5), n, 10)
+#' betas = rnorm(3)
+#' y = rnorm(n, betas[1]*x + betas[2]*x + betas[3]*x)
+#' x = cbind(x,linearcombos,probes)
+#' x = as.data.frame(x)
+#' pop1 = ga_compute(dim = ncol(x), p = nrow(x), t = 100, selection_method = 'score', partial_update = FALSE, data = x, fitness = AIC, func = lm, response = y, min = TRUE)
+#' pop2 = ga_compute(dim = ncol(x), p = nrow(x), t = 300, selection_method = 'score', partial_update = FALSE, data = x, fitness = AIC, func = lm, response = y, min = TRUE)
+#' }
+#'
 
 
 ga_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update = FALSE, parent_ratio = 0.5, m_prob = 0.03, ...){
@@ -171,4 +191,26 @@ ga_select_index = function(ga_fitness_scores, method = 'rank'){
     parents = c(parents, sample(1:p, size = p - length(parents), replace = TRUE))
   }
   return(parents)
+}
+
+gen_linearcombo = function(x){
+  # This function takes in a dataset and returns
+  # a vector that is a linear combination of
+  # a subset of the columns of the data
+
+  keep = rep(FALSE, ncol(x))
+
+  # Make sure we get a non trivial linear combination
+  while(sum(keep) < 1){
+    keep = ga_rlogical(ncol(x))
+  }
+
+  betas = rnorm(sum(keep))
+
+  # In case we get a combination of only one column
+  if(sum(keep) == 1){
+    return(betas*x[,keep])
+  } else{
+    return(rowSums(betas*x[,keep]))
+  }
 }
