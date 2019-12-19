@@ -33,7 +33,7 @@ GA_initialize = function(dim, p = 20){
 #' @param fitness A function, to calculalte the fitness, default AIC
 #' @param func A function of linear regression, either 'glm' or 'lm', default lm
 #' @param min A logical variable, if TRUE, it will return the negative value of fitness scores
-#' @return A list of logical variables with highest fitness score after iterations
+#' @return A list of two :a list of latest generation and a vector of highest fitness score of each iteration
 #' @examples 
 #' GA_compute(dim = 500, p = 20, t = 100, selection_method = 'rank', partial_update = TRUE, data = data, fitness = AIC, func = glm, response = y)
  
@@ -48,16 +48,18 @@ GA_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update
     assert_that(parent_ratio >= 0 & parent_ratio <= 1, msg = 'Ratio of parents should be between 0 and 1')
     assert_that(nrow(data)>=dim, msg = 'The dimenstion exceeds the length of observed data vector.')
     pop = GA_initialize(dim, p)
+    highest_fitness = numeric()
     
     for(i in 1:t){
         # Find fitness
         fitness_scores = fitness_score(pop, ...)
+        highest_fitness = c(highest_fitness, max(fitness_scores))
         #UPDATE(pop)
         parents = pop[select_index(fitness_scores, method = selection_method)]
         p = length(parents)
         n_cross = floor(p/2)
         children = list(n_cross*2)
-
+        
         for(i in 1:n_cross){
             childs = ga_crossover(parentA = parents[[i]], parentB = parents[[p-i+1]])
             children[[(i*2-1)]] = childs[[1]]
@@ -72,7 +74,7 @@ GA_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update
         children = lapply(children, ga_mutate)
         pop = children
     }
-    return(pop)
+    return(list(pop,highest_fitness))
 }
 
 select_index = function(fitness_scores, method = 'rank'){
@@ -97,6 +99,6 @@ select_index = function(fitness_scores, method = 'rank'){
 #                   x4 =c (5,4,6,2,4),x5 = c(100,200,300,400,500))
 data = read.table('madelon_train.data')
 y = unlist(read.table('madelon_train.labels'))
-pop = GA_compute(dim = 500, p = 20, t = 100, selection_method = 'rank', partial_update = TRUE, data = data, fitness = AIC, func = glm, response = y)
+pop = GA_compute(dim = 500, p = 20, t = 100, selection_method = 'score', partial_update = FALSE, data = data, fitness = AIC, func = glm, response = y, min = TRUE)
 rank = frankv(fitness_score(pop, data, fitness = AIC, func = glm, response = y), order = -1, ties.method = 'first')
-pop[rank == 1]
+plot(x = 1:100, y = pop[[2]], xlab = 'interation', ylab = 'highest fitness')
