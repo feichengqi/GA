@@ -41,16 +41,16 @@ ga_mutate = function(child, mprob = 0.03){
   return(child)
 }
 
-# The new fitness function.
-#list_of_gene is a list of gene likes
-#list(c(TRUE,FALSE,FALSE), c(TRUE,FALSE,TRUE), c(TRUE,FALSE,TRUE)).
-#data is a dataframe containing several x columus.
-#fitness is the fitness function, default in AIC.
-#func is the regression method, likes lm or glm, default in lm.
-#response is the response value (y).
-#min: TRUE is for those fitness function the smaller the fitness value the better the model
-#like AIC,while FALSE is for those the larger fitness value the better the model.
 ga_fitness_score <- function(list_of_gene, data, fitness = AIC, func = lm, response, min = FALSE) {
+  #The new fitness function.
+  #list_of_gene is a list of gene likes
+  #list(c(TRUE,FALSE,FALSE), c(TRUE,FALSE,TRUE), c(TRUE,FALSE,TRUE)).
+  #data is a dataframe containing several x columus.
+  #fitness is the fitness function, default in AIC.
+  #func is the regression method, likes lm or glm, default in lm.
+  #response is the response value (y).
+  #min: TRUE is for those fitness function the smaller the fitness value the better the model
+  #like AIC,while FALSE is for those the larger fitness value the better the model.
 
   assert_that(is.data.frame(data), msg = "the data must be a dataframe.")
   assert_that(length(response) == nrow(data),
@@ -73,7 +73,6 @@ ga_fitness_score <- function(list_of_gene, data, fitness = AIC, func = lm, respo
   }
 }
 
-## GA_initialize() function initializes the
 ga_initialize = function(dim, p = 20){
   # This function takes dimension and the number of individuals
   # and returns a list of initialized individuals
@@ -106,13 +105,12 @@ ga_initialize = function(dim, p = 20){
 #' GA_compute(dim = 500, p = 20, t = 100, selection_method = 'rank', partial_update = TRUE, data = data, fitness = AIC, func = glm, response = y)
 
 
-
-
-# This function computes the GA results
-# dim is the dimension of genes
-# p is the number of individuals in population
-# t is the time of iterating
 ga_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update = FALSE, parent_ratio = 0.5, m_prob = 0.03, ...){
+  # This function computes the GA results
+  # dim is the dimension of genes
+  # p is the number of individuals in population
+  # t is the time of iterating
+
   assert_that(parent_ratio >= 0 & parent_ratio <= 1, msg = 'Ratio of parents should be between 0 and 1')
   assert_that(nrow(data)>=dim, msg = 'The dimenstion exceeds the length of observed data vector.')
   pop = ga_initialize(dim, p)
