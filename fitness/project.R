@@ -1,5 +1,5 @@
 library(assertthat)
-
+library(testthat)
 # The new fitness function.
 #list_of_gene is a list of gene likes 
 #list(c(TRUE,FALSE,FALSE), c(TRUE,FALSE,TRUE), c(TRUE,FALSE,TRUE)).
@@ -31,7 +31,6 @@ ga_fitness_score <- function(list_of_gene, data, fitness = AIC, func = lm, respo
     return (fitness_value)
     }
 }
-
 
 
 
