@@ -1,5 +1,7 @@
 ## Test for fitness
 library(testthat)
+library(prodlim)
+
 x = 1:100
 data = cbind(x, cos(1:100), sin(1:100))
 y = x + rnorm(n = 100)
@@ -46,8 +48,35 @@ for(i in 1:7){
   fitness = c(fitness, AIC(mod))
 }
 fitness_score = ga_fitness_score(list_of_gene = gene, response = y, data = data3)
-test_that('the fitness_socre result is wrong',
+test_that('the fitness_score result is wrong',
           {
             expect_equal(fitness, fitness_score)
           })
+
+# Tests for ga_mutate and ga_crossover
+test_that("ga_mutate works",{
+  all_combos = unique(expand.grid(c(TRUE,FALSE,FALSE),
+                                  c(TRUE,FALSE,FALSE),
+                                  c(TRUE,FALSE,FALSE)))
+  result = ga_mutate(c(TRUE,FALSE,FALSE))
+  check = sum(row.match(all_combos, matrix(result, nrow = 1)), na.rm = T)
+  expect_equal(check,1L)
+})
+
+test_that("ga_crossover works",{
+  parentA = c(TRUE, FALSE, FALSE)
+  parentB = c(FALSE, TRUE, TRUE)
+  child1 = as.data.frame(matrix(
+    c(TRUE,TRUE,TRUE,
+      TRUE,FALSE,TRUE,
+      TRUE,FALSE,FALSE), byrow = T, nrow = 3))
+  child2 = as.data.frame(matrix(
+    c(FALSE,FALSE,FALSE,
+      FALSE,TRUE,FALSE,
+      FALSE,TRUE,TRUE), byrow = T, nrow = 3))
+  result = ga_crossover(parentA, parentB)
+  check1 = row.match(child1, matrix(result[[1]], nrow = 1))
+  check2 = row.match(child2, matrix(result[[2]], nrow = 1))
+  expect_identical(check1,check2)
+})
 
