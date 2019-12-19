@@ -7,7 +7,7 @@ source('crossover/crossover.R')
 
 
 ## GA_initialize() function initializes the 
-GA_initialize = function(dim, p = 20){
+ga_initialize = function(dim, p = 20){
     # This function takes dimension and the number of individuals
     # and returns a list of initialized individuals
     
@@ -45,26 +45,26 @@ GA_initialize = function(dim, p = 20){
 # dim is the dimension of genes
 # p is the number of individuals in population
 # t is the time of iterating
-GA_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update = FALSE, parent_ratio = 0.5, m_prob = 0.03, ...){
+ga_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update = FALSE, parent_ratio = 0.5, m_prob = 0.03, ...){
     assert_that(parent_ratio >= 0 & parent_ratio <= 1, msg = 'Ratio of parents should be between 0 and 1')
     assert_that(nrow(data)>=dim, msg = 'The dimenstion exceeds the length of observed data vector.')
-    pop = GA_initialize(dim, p)
+    pop = ga_initialize(dim, p)
     highest_fitness = numeric()
     best_individual = list(0,0)
     for(i in 1:t){
         # Find fitness
-        fitness_scores = fitness_score(pop, ...)
-        max_fit_score = max(fitness_scores)
+        ga_fitness_scores = ga_fitness_score(pop, ...)
+        max_fit_score = max(ga_fitness_scores)
         
         # Find the best individual
         highest_fitness = c(highest_fitness, max_fit_score)
         if(max_fit_score > best_individual[[2]]){
-            best_individual[[1]] = pop[fitness_scores == max_fit_score]
+            best_individual[[1]] = pop[ga_fitness_scores == max_fit_score]
             best_individual[[2]] = max_fit_score
         }
         
         #UPDATE(pop)
-        parents = pop[select_index(fitness_scores, method = selection_method)]
+        parents = pop[ga_select_index(ga_fitness_scores, method = selection_method)]
         p = length(parents)
         n_cross = floor(p/2)
         children = list(n_cross*2)
@@ -85,24 +85,24 @@ GA_compute = function(dim, p, t = 100, selection_method = 'rank', partial_update
     }
     
     # Latest Update of best_individual
-    fitness_scores = fitness_score(pop, ...)
+    ga_fitness_scores = ga_fitness_score(pop, ...)
     if(max_fit_score > best_individual[[2]]){
-        best_individual[[1]] = pop[fitness_scores == max_fit_score]
+        best_individual[[1]] = pop[ga_fitness_scores == max_fit_score]
         best_individual[[2]] = max_fit_score
     }
     return(list(pop,highest_fitness, best_individual))
 }
 
-select_index = function(fitness_scores, method = 'rank'){
+ga_select_index = function(ga_fitness_scores, method = 'rank'){
     assert_that(method %in% c('score', 'rank'), msg = "method should be {score, rank}")
-    p = length(fitness_scores)
+    p = length(ga_fitness_scores)
     if(method == 'rank'){
-        fitness_rank = frankv(fitness_scores, order = 1)
+        fitness_rank = frankv(ga_fitness_scores, order = 1)
         selection_prob = 2*fitness_rank / (p^2 + p)
         parents = sample(1:p, size = p, replace = TRUE, prob = selection_prob)
     }
     if(method == 'score'){
-        parents = (1:p)[fitness_scores >= median(fitness_scores)]
+        parents = (1:p)[ga_fitness_scores >= median(ga_fitness_scores)]
         parents = c(parents, sample(1:p, size = p - length(parents), replace = TRUE))
     }
     return(parents)
@@ -115,8 +115,8 @@ select_index = function(fitness_scores, method = 'rank'){
 #                   x4 =c (5,4,6,2,4),x5 = c(100,200,300,400,500))
 data = read.table('madelon_train.data')
 y = unlist(read.table('madelon_train.labels'))
-pop = GA_compute(dim = 500, p = 20, t = 100, selection_method = 'score', partial_update = FALSE, data = data, fitness = AIC, func = glm, response = y, min = TRUE)
+pop = ga_compute(dim = 5, p = 20, t = 100, selection_method = 'score', partial_update = FALSE, data = data, fitness = AIC, func = glm, response = y, min = TRUE)
 
-ft_score = fitness_score(pop[[1]], data, fitness = AIC, func = glm, response = y, min = TRUE)
+ft_score = ga_fitness_score(pop[[1]], data, fitness = AIC, func = glm, response = y, min = TRUE)
 result = pop[[1]][ft_score == max(ft_score)]
 plot(x = 1:100, y = pop[[2]], xlab = 'iteration', ylab = 'highest fitness')

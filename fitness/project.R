@@ -9,7 +9,7 @@ library(assertthat)
 #response is the response value (y).
 #min: TRUE is for those fitness function the smaller the fitness value the better the model
 #like AIC,while FALSE is for those the larger fitness value the better the model.
-fitness_score <- function(list_of_gene, data, fitness = AIC, func = lm, response, min = FALSE) {
+ga_fitness_score <- function(list_of_gene, data, fitness = AIC, func = lm, response, min = FALSE) {
   
   assert_that(is.data.frame(data), msg = "the data must be a dataframe.")
   assert_that(length(response) == nrow(data), 

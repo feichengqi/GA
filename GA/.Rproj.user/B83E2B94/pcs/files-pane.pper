@@ -1,0 +1,9 @@
+{
+    "path" : "~/GA",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}

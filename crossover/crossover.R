@@ -1,4 +1,4 @@
-rlogical = function(size, p = 0.5){
+ga_rlogical = function(size, p = 0.5){
   # This function samples from Trues and Falses with 
   # probability 1/2 each by default
   
@@ -39,6 +39,6 @@ ga_mutate = function(child, mprob = 0.03){
 
 n = 20
 
-parents = matrix(rlogical(n^2), n, n) 
+parents = matrix(ga_rlogical(n^2), n, n) 
 child_a = ga_crossover(parents[,1], parents[,2])
 child_b = ga_mutate(child_a)
