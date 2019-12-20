@@ -1,6 +1,11 @@
 library(assertthat)
 library(testthat)
 library(prodlim)
+library(data.table)
+library(rlist)
+library(data.table)
+library(testthat)
+library(devtools)
 
 # Test main function select and ga_fitness_score
 
@@ -29,41 +34,10 @@ test_that('ga_fitness_score works', {
   expect_equal(fitness, fitness_score)
 })
 
-context('test 2')
-
-test_that("select works",{
-  x = 1:100
-  data = cbind(x, cos(1:100), sin(1:100)-cos(1:100))
-  y = x + rnorm(n = 100)
-
-  gene = list()
-  gene[[1]] = c(TRUE, TRUE, TRUE)
-  gene[[2]] = c(TRUE, TRUE, FALSE)
-  gene[[3]] = c(TRUE, FALSE, TRUE)
-  gene[[4]] = c(FALSE, TRUE, TRUE)
-  gene[[5]] = c(FALSE, FALSE, TRUE)
-  gene[[6]] = c(FALSE, TRUE, FALSE)
-  gene[[7]] = c(TRUE, FALSE, FALSE)
-
-  fitness = numeric()
-  for(i in 1:7){
-    mod = lm(y~data[,gene[[i]]])
-    fitness = c(fitness, AIC(mod))
-  }
-
-  data = as.data.frame(data)
-  fitness_scores = ga_fitness_score(list_of_gene = gene, data = data, fitness = AIC, func = lm, response = y, min = FALSE)
-  #pop_result = select(dim = 3, p = 25, t = 50, m_prob = 0.01, data = data, fitness = AIC, func = lm, response = y, min = TRUE)
-  #names(pop_result[[3]][[1]]) = NULL
-
-  ## Skipped
-  expect_true(TRUE)
-})
-
 
 # Test fitness_score again
 
-context('test 3')
+context('test 2')
 
 test_that("ga_fitness_score works", {
   x = 1:100
@@ -94,7 +68,7 @@ test_that("ga_fitness_score works", {
 
 # Tests for ga_mutate and ga_crossover
 
-context('test 4')
+context('test 3')
 
 test_that("ga_mutate works",{
   all_combos = unique(expand.grid(c(TRUE,FALSE,FALSE),
@@ -105,7 +79,7 @@ test_that("ga_mutate works",{
   expect_equal(check,1L)
 })
 
-context('test 5')
+context('test 4')
 
 test_that("ga_crossover works",{
   parentA = c(TRUE, FALSE, FALSE)
